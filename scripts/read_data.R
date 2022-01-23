@@ -1,6 +1,6 @@
 if (!require("openxlsx")) install.packages("openxlsx")
 library(openxlsx)
-read_count_table <- function(file_path, mapping_table) {
+read_count_table <- function(file_path) {
   counts <- read.table(file_path, sep ="\t")
   colnames(counts) <- c("gene_id", "count")
   # ID JGI (Joint Genome Institute)

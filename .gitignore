@@ -7,6 +7,12 @@
 doc/*
 .Rproj.user
 
+# Results
+*.pdf
+*.png 
+*.jpg
+*.jpeg
+
 # History files
 .Rhistory
 .Rapp.history
