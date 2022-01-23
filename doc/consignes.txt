@@ -1,0 +1,11 @@
+Projet chataignon
+
+-> Fonction 
+Comparaison des niveaux d'expression moyens
+
+-> Widget
+R
+
+-> Clustering
+Nombre de clusters (méthode elbow, silhouette) 
+Tailles des clusters
