@@ -1,3 +1,6 @@
+if(!require(tidyverse)) install.packages("tidyverse")
+library(tidyverse)
+
 rpkm <- function(condition_table) {
   # Get the average RPKM distributions 
   # counts: number of reads per gene
@@ -10,6 +13,15 @@ rpkm <- function(condition_table) {
   return(rpk/coef)
 }  
 
-plot_rpkm <- function(rpkm) {
+plot_rpkm <- function(rpkm, title) {
+  # Plot an rpkm distribution
+  ggplot(rpkm) +
+    aes(x) +
+    geom_point() +
+    labs(title = title)
+}
 
+plot_rpkm_comparison <- function(rpkm, rpkm2) {
+  
+  
 }
