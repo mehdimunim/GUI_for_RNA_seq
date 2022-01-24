@@ -1,9 +1,5 @@
-if(!require(tidyverse))
-  install.packages("tidyverse")
-library(tidyverse)
-
 rpkm <- function(condition_table) {
-  # Get the average RPKM distributions
+  # Get the RPKM distributions
   # counts: number of reads per gene
   # lengths: lengths of the genes in counts
   # RPKM = numberOfReads / ( geneLength/1000 * totalNumReads/1,000,000 )
@@ -13,6 +9,15 @@ rpkm <- function(condition_table) {
   coef <- sum(rpk) / 1e6
   return(rpk / coef)
 }
+
+get_rpkm <- function(file_path, length_table, mapping_table){ 
+  ### read counts and group in two tables
+  count_table <- read_count_table(file_path)
+  table <-
+    get_condition_table(count_table, length_table, mapping_table)
+  l <- list(rpkm(table))
+  return(l)
+  }
 
 plot_lrpkm <- function(rpkm,
                        title,
@@ -38,7 +43,7 @@ plot_lrpkm <- function(rpkm,
     main = title,
     col = c1,
     xlab = "Log(RPKM)",
-    ylab = "Density of log(RPKM)",
+    ylab = "Count of log(RPKM)",
     add = add
   )
   lines(d, col = c2, lwd = 2)

@@ -1,44 +1,42 @@
 # Main Script
-rm(list = ls())
 source("read_data.R")
 source("rpkm.R")
+source("group.R")
 
-## Input directory
+## Genome files
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
-directory <- "../data"
 annot_path <- "../data/genome/QM6aAnnotationIFPEN2021strict.gff"
 mapping_table_path <- "../data/genome/MappingTable_geneID.xlsx"
 
-## Loading count file paths
-#sampleFiles <- list.files(directory, pattern = "(*_1[0-2])|(*_[1-9]).tsv")
+## Load sample files paths and info
+directory <- "../data/expression"
+paths <- list.files(directory, pattern = "*.tsv", full.names = TRUE, recursive =TRUE)
+replics <- c(rep(seq(1,6),4), 
+             rep(seq(1,4),2), 
+             rep(c(1,2), 2))
+condition <- c(rep("glucose_24",6), 
+               rep("glucose_48",6), 
+               rep("lactose_24",6),
+               rep("lactose_48",6), 
+               rep("mixed_g75_l25_24",4), 
+               rep("mixed_g75_l25_48",4), 
+               rep("mixed_g90_l10_24",2),
+               rep("mixed_g90_l10_48",2))
 
-## Calculate RPKM
-### Reference genome
+sampleFiles <- data.frame(paths, replics, condition)
+names(sampleFiles) <- c("paths", "replicates", "conditions")
+
+
+## Calculate and plot log(RPKM)
+### Load reference genome info
 length_table <- read_length_table(annot_path)
 mapping_table <- read_mapping_table(mapping_table_path)
 
-### RNA-seq reads
-path1 <-
-  paste(directory,
-        "expression/glucose/24/GSM2188043_expression_1.tsv",
-        sep = "/")
-path2 <-
-  paste(directory,
-        "expression/glucose/48/GSM2188049_expression_19.tsv",
-        sep = "/")
+### Get RPKM vector for each sample files
+sampleFiles$rpkm <- sapply(sampleFiles$paths, function(x) get_rpkm(x, length_table, mapping_table))
 
-### read counts and group in two tables
-count_table1 <- read_count_table(path1)
-count_table2 <- read_count_table(path2)
-table_24 <-
-  get_condition_table(count_table1, length_table, mapping_table)
-table_48 <-
-  get_condition_table(count_table2, length_table, mapping_table)
+### group by experience
+analysis <- group_by_analysis(sampleFiles)
 
-### RPKM
-rpkm_24 <- rpkm(table_24)
-rpkm_48 <- rpkm(table_48)
-
-#plot_rpkm(rpkm_24, "RPKM test glucose 24 rep1", c = "grey")
-#plot_rpkm(rpkm_48, "RPKM test glucose 48 rep1", c = "blue")
-plot_lrpkm_comparison(rpkm_24, rpkm_48, "RPKM test glucose 24 48 rep1")
+### Plot RPKM comparison
+apply(analysis, 1, function(x) plot_lrpkm_comparison(x$rpkm1, x$rpkm2, x$analysis))
