@@ -1,10 +1,10 @@
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 # Main Script
 source("read_data.R")
 source("rpkm.R")
 source("group.R")
 
 ## Genome files
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 annot_path <- "../data/genome/QM6aAnnotationIFPEN2021strict.gff"
 mapping_table_path <- "../data/genome/MappingTable_geneID.xlsx"
 
