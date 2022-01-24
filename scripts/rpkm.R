@@ -36,7 +36,6 @@ plot_lrpkm <- function(rpkm,
   plot(
     h,
     main = title,
-    density = 10,
     col = c1,
     xlab = "Log(RPKM)",
     ylab = "Density of log(RPKM)",
@@ -52,10 +51,10 @@ plot_lrpkm_comparison <- function(rpkm1,
                                  output_folder = "") {
   # Plot and compare RPKM distributions
   # if save is true, save graph in the output_folder
-  plot_lrpkm(rpkm1, title, c1 = "grey", c2 = "blue")
+  plot_lrpkm(rpkm1, title, c1 = rgb(1,215/255,0,0.2), c2 = "red")
   plot_lrpkm(rpkm2,
             "",
-            c1 = "grey",
-            c2 = "red",
+            c1 = rgb(175/255,238/255,238/255,0.2),
+            c2 = "blue",
             add = TRUE)
 }
