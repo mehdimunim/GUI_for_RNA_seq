@@ -1,6 +1,6 @@
 if(!require(dplyr)) install.packages(dplyr)
 library(dplyr) 
-group_by_analysis <- function(RPKM_table) {
+group_by_analysis <- function(fpkm_table) {
   names <- c(
     "Lactose vs Glucose 24h",
     "Lactose vs Glucose 48h",
@@ -19,7 +19,7 @@ group_by_analysis <- function(RPKM_table) {
                         "mixed_g75_l25_24",
                         "mixed_g75_l25_48"
                       ),
-                      FUN = function(x) avg(RPKM_table, x)
+                      FUN = function(x) avg(fpkm_table, x)
                     )),
                     cbind(sapply(
                       c(
@@ -30,16 +30,16 @@ group_by_analysis <- function(RPKM_table) {
                         "glucose_24",
                         "glucose_48"
                       ),
-                      FUN = function(x) avg(RPKM_table, x)
+                      FUN = function(x) avg(fpkm_table, x)
                     )))
-  names(res) <- c("analysis", "rpkm1", "rpkm2")
+  names(res) <- c("analysis", "fpkm1", "fpkm2")
   return(res)
 }
 
-avg <- function(RPKM_table, condition_label) {
-  rpkms <-
-    filter(RPKM_table,  condition == condition_label)$rpkm # select rpkm by condition
-  res <- rowMeans(data.frame(rpkms)) # average condition
+avg <- function(fpkm_table, condition_label) {
+  fpkms <-
+    filter(fpkm_table,  condition == condition_label)$fpkm # select fpkm by condition
+  res <- rowMeans(data.frame(fpkms)) # average condition
   res <- list(res)
   return(res)
 }
