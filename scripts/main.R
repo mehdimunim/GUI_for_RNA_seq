@@ -43,5 +43,6 @@ analysis <- group_by_analysis(sampleFiles)
 apply(analysis, 1, function(x) plot_lfpkm_comparison(x$fpkm1, x$fpkm2, x$analysis))
 
 ## Student test
-alpha <- 0.01
-apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha))
+alpha <- 0.001
+test <- apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha))
+dev.off()
