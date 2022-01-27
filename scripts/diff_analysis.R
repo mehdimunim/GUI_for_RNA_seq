@@ -13,11 +13,9 @@ get_dds <-
     
     l <-
       lapply(sampleFiles, function(fn)
-        read.table(
-          fn,
-          fill = TRUE,
-          header = TRUE
-        ))
+        read.table(fn,
+                   fill = TRUE,
+                   header = TRUE))
     tbl <- sapply(l, function(a)
       a[, ncol(a)])
     colnames(tbl) <- sampleFiles
@@ -42,7 +40,8 @@ get_dds <-
     
   }
 
-get_diff_analysis <- function(dds, pCutoff,
+get_diff_analysis <- function(dds,
+                              pCutoff,
                               threshold,
                               cond.changed,
                               conda.ref)
@@ -57,6 +56,29 @@ get_diff_analysis <- function(dds, pCutoff,
   return (res)
 }
 
-plot_diff_results <- function(res) {
-  plotMa(res)
+extract_de_genes <- function(res, up.or.down) {
+  # get the metadata from results
+  p.cutoff <- metadata(res)$alpha
+  threshold <- metadata(res)$lfcThreshold
+  
+  # subset of differentially expressed genes
+  de <- subset(res, padj < p.cutoff)
+  
+  if (up.or.down == "up") {
+    return(subset(de, log2FoldChange > threshold))
+  }
+  else {
+    return(subset(de, log2FoldChange < -1 * threshold))
+  }
+  
+}
+
+plot_diff_results <- function(analysis_label, up, down) {
+  ggplot(NULL,
+         aes(x = c("low", "up"),
+             y = c(length(up$padj), length(down$padj)))) +
+    geom_col() +
+    labs(title = analysis_label,
+         x = "Differentially expressed genes",
+         y = "Count of genes")
 }
