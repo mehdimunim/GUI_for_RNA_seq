@@ -45,4 +45,12 @@ apply(analysis, 1, function(x) plot_lfpkm_comparison(x$fpkm1, x$fpkm2, x$analysi
 ## Student test
 alpha <- 0.001
 test <- apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha))
+
+## Differential analysis
+p.cutOff <- 0.01
+threshold <- 2
+dds <- get_dds(paths, condition)
+res <- get_diff_analysis(dds, p.cutOff, threshold, "lactose_24", "glucose_24")
+plot_diff_results(res)
+
 dev.off()
