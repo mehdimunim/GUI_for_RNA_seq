@@ -4,6 +4,7 @@ source("read_data.R")
 source("fpkm.R")
 source("group.R")
 source("test.R")
+source("diff_analysis.R")
 
 ## Genome files
 annot_path <- "../data/genome/QM6aAnnotationIFPEN2021strict.gff"
@@ -50,9 +51,5 @@ test <- apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analys
 p.cutOff <- 0.01
 threshold <- 2
 dds <- get_dds(paths, condition)
-res <- get_diff_analysis(dds, p.cutOff, threshold, "lactose_24", "glucose_24")
-up <- extract_de_genes(res, "up")
-down <- extract_de_genes(res, "down")
-plot_diff_results("lactose vs glucose 24h", up, down)
-
-dev.off()
+comparison <- get_condition_comparisons()
+plot_all_diff(paths, condition, comparison, p.cutOff, threshold)

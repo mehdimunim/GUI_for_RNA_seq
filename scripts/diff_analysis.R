@@ -24,7 +24,7 @@ get_dds <-
     ddsHTSeq <-
       DESeqDataSetFromMatrix(
         countData = tbl,
-        colData = sampleTable[, -(1:2), drop = FALSE],
+        colData = sampleTable[,-(1:2), drop = FALSE],
         design = ~ condition
       )
     ddsHTSeq <-
@@ -82,3 +82,30 @@ plot_diff_results <- function(analysis_label, up, down) {
          x = "Differentially expressed genes",
          y = "Count of genes")
 }
+
+plot_all_diff <-
+  function(sampleFiles,
+           sampleCondition,
+           expTable,
+           p.cutoff,
+           threshold) {
+    dds <- get_dds(sampleFiles, sampleCondition)
+    
+    m <- apply(expTable,
+               1,
+               function(comp) {
+                 res <-
+                   get_diff_analysis(dds, p.cutOff, threshold, comp$treated, comp$ref)
+                 up <- extract_de_genes(res, "up")
+                 down <- extract_de_genes(res, "down")
+                 return (c(length(up), length(down)))
+               })
+    names(m) <- c("up", "down")
+    m$label <- rownames(exp)
+    
+    ggplot(m,
+           aes(x = names(m),
+               y = c(up, down))) +
+      geom_col() +
+      facet_wrap(~label) 
+  }
