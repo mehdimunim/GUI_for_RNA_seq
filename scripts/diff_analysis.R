@@ -104,7 +104,7 @@ get_up_down_table <- function(dds,
   
   # Reformat data frame
   up_down_table <- data.frame(
-    exp =
+    count =
       c(m$up, m$down),
     type = c(rep("up", length(m$up)), rep("down", length(m$down))),
     label = rep(m$label,2)
@@ -120,8 +120,9 @@ plot_all_diff <-
     ggplot(up_down_table,
            aes(
              x = type,
-             y = exp)
+             y = count)
            ) +
       geom_col() +
-      facet_wrap(~label)
+      facet_wrap(~label) +
+      theme(strip.text = element_text(size = 6))
   }
