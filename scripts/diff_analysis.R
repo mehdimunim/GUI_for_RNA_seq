@@ -83,29 +83,45 @@ plot_diff_results <- function(analysis_label, up, down) {
          y = "Count of genes")
 }
 
+get_up_down_table <- function(dds,
+                              expTable,
+                              p.cutoff,
+                              threshold) {
+  m <- apply(expTable,
+             1,
+             function(comp) {
+               # extract number of up and down genes
+               res <-
+                 get_diff_analysis(dds, p.cutOff, threshold, comp[["treated"]], comp[["ref"]])
+               up <- extract_de_genes(res, "up")
+               down <- extract_de_genes(res, "down")
+               return (c(length(up$padj), length(down$padj)))
+             })
+  m <- t(m)
+  m <- data.frame(m)
+  names(m) <- c("up", "down")
+  m$label <- rownames(expTable)
+  
+  # Reformat data frame
+  up_down_table <- data.frame(
+    exp =
+      c(m$up, m$down),
+    type = c(rep("up", length(m$up)), rep("down", length(m$down))),
+    label = rep(m$label,2)
+             )
+  
+  
+  return(up_down_table)
+}
+
 plot_all_diff <-
-  function(sampleFiles,
-           sampleCondition,
-           expTable,
-           p.cutoff,
-           threshold) {
-    dds <- get_dds(sampleFiles, sampleCondition)
+  function(up_down_table) {
     
-    m <- apply(expTable,
-               1,
-               function(comp) {
-                 res <-
-                   get_diff_analysis(dds, p.cutOff, threshold, comp$treated, comp$ref)
-                 up <- extract_de_genes(res, "up")
-                 down <- extract_de_genes(res, "down")
-                 return (c(length(up), length(down)))
-               })
-    names(m) <- c("up", "down")
-    m$label <- rownames(exp)
-    
-    ggplot(m,
-           aes(x = names(m),
-               y = c(up, down))) +
+    ggplot(up_down_table,
+           aes(
+             x = type,
+             y = exp)
+           ) +
       geom_col() +
-      facet_wrap(~label) 
+      facet_wrap(~label)
   }

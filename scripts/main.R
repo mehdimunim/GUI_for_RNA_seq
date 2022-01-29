@@ -52,4 +52,5 @@ p.cutOff <- 0.01
 threshold <- 2
 dds <- get_dds(paths, condition)
 comparison <- get_condition_comparisons()
-plot_all_diff(paths, condition, comparison, p.cutOff, threshold)
+up_down_table <- get_up_down_table(dds, comparison, p.cutOff, threshold)
+plot_all_diff(up_down_table)
