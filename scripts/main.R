@@ -1,5 +1,5 @@
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 # Main Script
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 source("read_data.R")
 source("fpkm.R")
 source("group.R")
@@ -41,11 +41,11 @@ sampleFiles$fpkm <- sapply(sampleFiles$paths, function(x) get_fpkm(x, length_tab
 analysis <- group_by_analysis(sampleFiles)
 
 ### Plot fpkm comparison
-apply(analysis, 1, function(x) plot_lfpkm_comparison(x$fpkm1, x$fpkm2, x$analysis))
+#apply(analysis, 1, function(x) plot_lfpkm_comparison(x$fpkm1, x$fpkm2, x$analysis))
 
 ## Student test
 alpha <- 0.001
-test <- apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha))
+#test <- apply(analysis, 1, function(x) summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha))
 
 ## Differential analysis
 p.cutOff <- 0.01
@@ -53,4 +53,4 @@ threshold <- 2
 dds <- get_dds(paths, condition)
 comparison <- get_condition_comparisons()
 up_down_table <- get_up_down_table(dds, comparison, p.cutOff, threshold)
-plot_all_diff(up_down_table)
+#plot_all_diff(up_down_table)

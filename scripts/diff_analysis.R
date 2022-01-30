@@ -73,15 +73,15 @@ extract_de_genes <- function(res, up.or.down) {
   
 }
 
-plot_diff_results <- function(analysis_label, up, down) {
-  ggplot(NULL,
-         aes(x = c("low", "up"),
-             y = c(length(up$padj), length(down$padj)))) +
-    geom_col() +
-    labs(title = analysis_label,
-         x = "Differentially expressed genes",
-         y = "Count of genes")
-}
+# plot_diff_results <- function(analysis_label, up, down) {
+#   ggplot(NULL,
+#          aes(x = c("low", "up"),
+#              y = c(length(up$padj), length(down$padj)))) +
+#     geom_col() +
+#     labs(title = analysis_label,
+#          x = "Differentially expressed genes",
+#          y = "Count of genes")
+# }
 
 get_up_down_table <- function(dds,
                               expTable,
@@ -114,8 +114,8 @@ get_up_down_table <- function(dds,
   return(up_down_table)
 }
 
-plot_all_diff <-
-  function(up_down_table) {
+plot_diff_results <-
+  function(up_down_table, fontsize) {
     
     ggplot(up_down_table,
            aes(
@@ -124,5 +124,5 @@ plot_all_diff <-
            ) +
       geom_col() +
       facet_wrap(~label) +
-      theme(strip.text = element_text(size = 6))
+      theme(strip.text = element_text(size = fontsize))
   }
