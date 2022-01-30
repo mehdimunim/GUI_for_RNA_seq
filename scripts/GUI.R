@@ -23,11 +23,14 @@ ui <- fluidPage(
       checkboxInput("all",
                     "View all comparisons"
       ),
+      radioButtons("radio", h3("Radio buttons"),
+                   choices = list("Choice 1" = 1, "Choice 2" = 2,
+                                  "Choice 3" = 3),selected = 1),
     ),
     
     mainPanel(
       plotOutput("distPlot"),
-      plotOutput("allPlot")
+      #plotOutput("allPlot")
     )
   )
 )
