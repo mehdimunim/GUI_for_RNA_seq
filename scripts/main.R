@@ -1,5 +1,5 @@
 # Main Script
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+#setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 source("read_data.R")
 source("fpkm.R")
 source("group.R")
@@ -53,4 +53,4 @@ threshold <- 2
 dds <- get_dds(paths, condition)
 comparison <- get_condition_comparisons()
 up_down_table <- get_up_down_table(dds, comparison, p.cutOff, threshold)
-#plot_all_diff(up_down_table)
+#plot_diff_results(up_down_table, 6)

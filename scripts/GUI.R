@@ -1,53 +1,109 @@
 library(shiny)
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 source("main.R")
 
 # User Interface
-ui <- fluidPage(
+ui <- fluidPage(tabsetPanel(
+  tabPanel("View RPKMs",
+           sidebarLayout(
+             sidebarPanel(
+               selectInput("analysis.type",
+                           "View analysis",
+                           choices = analysis$analysis)
+             ),
+             mainPanel(plotOutput("plotRPKM"))
+           )),
   
-  titlePanel("Conditions"),
   
-  sidebarLayout(
-    position = "left",
-    sidebarPanel(
-      selectInput("file",
-                  "View comparison",
-                  choices = c(
-                    "Lactose vs Glucose 24h",
-                    "Lactose vs Glucose 48h",
-                    "90% Glucose, 10% Lactose vs Glucose 24h",
-                    "90% Glucose, 10% Lactose vs Glucose 48h",
-                    "75% Glucose, 25% Lactose vs Glucose 24h",
-                    "75% Glucose, 25% Lactose vs Glucose 48h"
-                  )
+  tabPanel(
+    "Condition comparison",
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("comparison",
+                    "View comparison",
+                    choices = analysis$analysis),
+        checkboxInput("allComparison",
+                      "View all comparisons")
       ),
-      checkboxInput("all",
-                    "View all comparisons"
-      ),
-      radioButtons("radio", h3("Radio buttons"),
-                   choices = list("Choice 1" = 1, "Choice 2" = 2,
-                                  "Choice 3" = 3),selected = 1),
-    ),
-    
-    mainPanel(
-      plotOutput("distPlot"),
-      #plotOutput("allPlot")
+      mainPanel(plotOutput("plotComparison"))
     )
   )
-)
+  ,
+  
+  tabPanel("Clustering",
+           sidebarLayout(
+             sidebarPanel(selectInput(
+               "resultType",
+               "Result type",
+               choices = c(
+                 "Number of genes" = "num",
+                 "Expression profile" = "expProf",
+                 "Average expression profile" = "avgExp"
+               )
+             ),),
+             mainPanel(plotOutput("plotClustering"))
+           ))
+  ,
+  
+  tabPanel("Test",
+           sidebarLayout(
+             sidebarPanel(
+               selectInput("analysisTest",
+                           "View analysis",
+                           choices = analysis$analysis)
+             ),
+             mainPanel(verbatimTextOutput("printTest"))
+           )),
+  
+  tabPanel("About",
+           fluidRow(column(
+             6,
+             includeMarkdown("../README.md")
+           )))
+  
+))
 
 # Server
 server <- function(input, output) {
+  output$plotRPKM <- renderPlot({
+    x <- analysis[which(analysis$analysis == input$analysis.type), ]
+    plot_lfpkm_comparison(unlist(x$fpkm1), unlist(x$fpkm2), x$analysis)
+  })
   
-  output$distPlot <- renderPlot({
-    if(!input$all){
-      sub_table <- up_down_table[which(up_down_table$label == input$file),]
+  output$plotComparison <- renderPlot({
+    if (!input$allComparison) {
+      sub_table <-
+        up_down_table[which(up_down_table$label == input$comparison), ]
       plot_diff_results(sub_table, fontsize = 12)
     }
     else{
       plot_diff_results(up_down_table, fontsize = 6)
     }
   })
+  
+  output$printTest <- renderPrint({
+    x <- analysis[which(analysis$analysis == input$analysisTest), ]
+    summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha)
+  })
+  
+  output$Clustering <- renderPlot({
+    expMatrix <-
+      get_expression_matrix(dds, comparison, p.cutOff, threshold)
+    kmeans.obj <- kmeans(expMatrix, 10)
+    if (input$resultType == "num") {
+      plot_cluster_sizes(expMatrix, kmeans.obj)
+    }
+    if (input$resultType == "expProf") {
+      plot_exp_profile(expMatrix, kmeans.obj)
+    }
+    
+    if (input$resultType == "avgExp") {
+      plot_mean_exp_profile(expMatrix, kmeans.obj)
+    }
+    
+  })
+  
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
