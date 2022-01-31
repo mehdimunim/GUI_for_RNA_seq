@@ -1,6 +1,10 @@
 library(tidyverse)
 
-
+clustering <- function(expMatrix, n.clusters) {
+  kmeans.obj <- kmeans(expMatrix, n.clusters)
+  return(kmeans.obj)
+  
+}
 get_expression_matrix <- function(dds,
                                   expTable,
                                   p.cutoff,
@@ -18,9 +22,13 @@ get_expression_matrix <- function(dds,
 }
 
 filter_exp <- function(expMatrix) {
-  expMatrix[is.na(expMatrix)] <- 0
-  return (expMatrix)
+  perc <- 100*sum(is.na(expMatrix))/nrow(expMatrix)
+  print(paste0(round(perc,2)," % of NA in expression matrix"))
+  print("Filtering NA")
+  cleaned_expMatrix <-na.omit(expMatrix)
+  return (cleaned_expMatrix)
 }
+
 
 
 plot_cluster_sizes <- function(expMatrix, kmeans.object) {

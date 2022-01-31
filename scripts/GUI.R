@@ -27,23 +27,22 @@ ui <- fluidPage(tabsetPanel(
       ),
       mainPanel(plotOutput("plotComparison"))
     )
-  )
-  ,
+  ),
   
-  tabPanel("Clustering",
+  tabPanel(
+    "Clustering",
            sidebarLayout(
-             sidebarPanel(selectInput(
+             sidebarPanel(
+               selectInput(
                "resultType",
                "Result type",
                choices = c(
                  "Number of genes" = "num",
                  "Expression profile" = "expProf",
-                 "Average expression profile" = "avgExp"
-               )
-             ),),
+                 "Average expression profile" = "avgExp"))
+             ),
              mainPanel(plotOutput("plotClustering"))
-           ))
-  ,
+           )),
   
   tabPanel("Test",
            sidebarLayout(
@@ -86,15 +85,12 @@ server <- function(input, output) {
     summarize_test(x$fpkm1, x$fpkm2, x$analysis, alpha)
   })
   
-  output$Clustering <- renderPlot({
-    expMatrix <-
-      get_expression_matrix(dds, comparison, p.cutOff, threshold)
-    kmeans.obj <- kmeans(expMatrix, 10)
+  output$plotClustering <- renderPlot({
     if (input$resultType == "num") {
       plot_cluster_sizes(expMatrix, kmeans.obj)
     }
     if (input$resultType == "expProf") {
-      plot_exp_profile(expMatrix, kmeans.obj)
+      plot_exp_profile(expMatrix)
     }
     
     if (input$resultType == "avgExp") {

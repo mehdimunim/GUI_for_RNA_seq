@@ -5,6 +5,7 @@ source("fpkm.R")
 source("group.R")
 source("test.R")
 source("diff_analysis.R")
+source("clustering.R")
 
 ## Genome files
 annot_path <- "../data/genome/QM6aAnnotationIFPEN2021strict.gff"
@@ -54,3 +55,12 @@ dds <- get_dds(paths, condition)
 comparison <- get_condition_comparisons()
 up_down_table <- get_up_down_table(dds, comparison, p.cutOff, threshold)
 #plot_diff_results(up_down_table, 6)
+
+## Clustering
+expMatrix <-
+  get_expression_matrix(dds, comparison, p.cutOff, threshold)
+expMatrix <- filter_exp(expMatrix)
+kmeans.obj <- clustering(expMatrix, 10)
+#plot_exp_profile(expMatrix)
+#plot_cluster_sizes(expMatrix, kmeans.obj)
+#plot_mean_exp_profile(expMatrix, kmeans.obj)
